@@ -162,11 +162,32 @@
 
             <div class="mt-5 d-flex gap-3">
                 <button class="btn btn-outline-custom px-4">Update Details</button>
-                <button class="btn btn-outline-danger btn-sm opacity-50">Delete Listing</button>
+                <button type="button" class="btn btn-outline-danger btn-sm opacity-50" onclick="deleteListing('${product.id}')">Delete Listing</button>
             </div>
         </div>
     </div>
 </div>
+<script>
+    async function deleteListing(productId) {
+        // Luxury brands don't use standard alerts; but for safety, a confirmation is good.
+        if (confirm("Are you sure you want to permanently remove this listing from CARSELL?")) {
+            try {
+                const response = await fetch('/api/products/' + productId, {
+                    method: 'DELETE',
+                });
 
+                if (response.ok) {
+                    // Smooth transition back to home
+                    window.location.href = "/";
+                } else {
+                    alert("Error: Could not remove the listing at this time.");
+                }
+            } catch (error) {
+                console.error("Delete failed:", error);
+                alert("An unexpected error occurred.");
+            }
+        }
+    }
+</script>
 </body>
 </html>

@@ -3,6 +3,8 @@ package com.proj.ecom_proj.model;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import jakarta.persistence.Entity;
@@ -93,7 +95,7 @@ public class Product {
     private String brand;
     private BigDecimal price;
     private String category;
-    
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date releaseDate;
     private boolean productAvailable;

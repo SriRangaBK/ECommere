@@ -3,8 +3,11 @@ package com.proj.ecom_proj.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,5 +27,14 @@ public class ProductController {
 	@GetMapping("/products/{id}")
 	public Product getProduct(@PathVariable int id) {
 		return service.getProduct(id);
+	}
+	@PostMapping("/products")
+	public String addProduct(@ModelAttribute Product product) {
+	    service.addProduct(product); // Ensure this method exists in your service
+	    return "redirect:/"; // Redirects back to home after adding
+	}
+	@DeleteMapping("/products/{id}")
+	public void deleteProduct(@PathVariable int id) {
+		service.deleteProduct(id);
 	}
 }

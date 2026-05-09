@@ -20,6 +20,10 @@ public class HomeController {
 
         return "home";
     }
+    @GetMapping("/add_product")
+    public String addProductPage() {
+        return "add_product"; // Maps to add_product.jsp
+    }
     @GetMapping("/product/{id}")
     public String getProduct(@PathVariable int id, Model model) {
 
@@ -27,4 +31,5 @@ public class HomeController {
 
         return "product";
     }
+
 }
