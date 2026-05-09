@@ -17,8 +17,13 @@ public class HomeController {
     public String home(Model model) {
 
         model.addAttribute("products", service.getAllProducts());
+        model.addAttribute("categories", service.getAllCategories());
 
         return "home";
+    }
+    @GetMapping("/register")
+    public String register(Model model) {
+    	return "register";
     }
     @GetMapping("/add_product")
     public String addProductPage() {
@@ -30,6 +35,14 @@ public class HomeController {
         model.addAttribute("product", service.getProduct(id));
 
         return "product";
+    }
+    
+    @GetMapping("/category/{id}")
+    public String getProducts(@PathVariable int id, Model model) {
+
+        model.addAttribute("products", service.getProducts(id));
+        model.addAttribute("categories", service.getAllCategories());
+        return "products";
     }
 
 }

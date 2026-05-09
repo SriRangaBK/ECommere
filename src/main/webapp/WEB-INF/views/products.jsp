@@ -3,18 +3,12 @@
 
 <!DOCTYPE html>
 <html>
-
 <head>
     <meta charset="UTF-8">
-    <title>Products | CarSell</title>
-
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-
+    <title>${selectedCategory} | CarSell</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <!-- REUSE THE CSS FROM YOUR HOME PAGE HERE -->
     <style>
 
         :root {
@@ -457,182 +451,67 @@
 
     </style>
 </head>
-
 <body>
 
 <header>
-
     <nav class="navbar navbar-expand-lg fixed-top">
-
         <div class="container-fluid">
-
             <a class="navbar-brand" href="/">CarSell</a>
-
-            <button class="navbar-toggler"
-                    type="button"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#navContent">
-
-                <span class="navbar-toggler-icon"></span>
-
-            </button>
-
-<ul class="navbar-nav me-auto">
-
-    <li class="nav-item">
-        <a class="nav-link active" href="/">Home</a>
-    </li>
-
-    <!-- Categories Dropdown -->
-    <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" 
-           href="#" 
-           id="navbarDropdown" 
-           role="button" 
-           data-bs-toggle="dropdown" 
-           aria-expanded="false">
-            Categories
-        </a>
-        <ul class="dropdown-menu border-0 shadow" 
-            aria-labelledby="navbarDropdown"
-            style="background: var(--surface); border: 1px solid var(--border) !important;">
-            
-            <c:forEach items="${categories}" var="category">
-                <li>
-                    <a class="dropdown-item" 
-                       href="/category/${category.id}"
-                       style="color: var(--text-secondary); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em;">
-                        ${category.name}
-                    </a>
-                </li>
-            </c:forEach>
-            
-            <li><hr class="dropdown-divider" style="border-color: var(--border);"></li>
-            <li>
-                <a class="dropdown-item" href="/" style="color: var(--accent); font-size: 0.8rem;">
-                    VIEW ALL
-                </a>
-            </li>
-        </ul>
-    </li>
-
-    <li class="nav-item">
-        <a class="nav-link" href="/add_product">Add Product</a>
-    </li>
-
-</ul>
-
+            <div class="collapse navbar-collapse" id="navContent">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle active" href="#" data-bs-toggle="dropdown">Categories</a>
+                        <ul class="dropdown-menu shadow">
+                            <c:forEach items="${categories}" var="cat">
+                                <li><a class="dropdown-item" href="/category/${cat.id}">${cat.name}</a></li>
+                            </c:forEach>
+                        </ul>
+                    </li>
+                    <li class="nav-item"><a class="nav-link" href="/add_product">Add Product</a></li>
+                </ul>
                 <div class="navbar-right">
-
                     <div class="cart-icon" onclick="viewCart()">
-
-                        <i class="bi bi-bag"></i>
-
-                        <span class="cart-text">Cart</span>
-
-                        <span id="cartCount" class="cart-badge">0</span>
-
+                        <i class="bi bi-bag"></i><span id="cartCount" class="cart-badge">0</span>
                     </div>
-
-                    <button class="theme-btn"
-                            id="themeToggle"
-                            title="Toggle Theme">
-
-                        <i class="bi bi-sun-fill"></i>
-
-                    </button>
-
-                    <input class="search-input form-control"
-                           id="productSearch"
-                           type="search"
-                           placeholder="Search products...">
-
+                    <button class="theme-btn" id="themeToggle"><i class="bi bi-sun-fill"></i></button>
+                    <input class="search-input form-control" id="productSearch" type="search" placeholder="Search ${selectedCategory}...">
                 </div>
-
             </div>
-
         </div>
-
     </nav>
-
 </header>
 
 <div class="section-header">
-
-    <h1 class="section-title">Collection</h1>
-
+    <h1 class="section-title">${selectedCategory}</h1>
     <div class="section-line"></div>
-
-    <span class="section-count"
-          id="countDisplay">
-
-        ${products.size()} items
-
-    </span>
-
+    <span class="section-count" id="countDisplay">${products.size()} items found</span>
 </div>
 
 <div class="grid" id="productGrid">
-
     <c:forEach items="${products}" var="product">
-
-        <div class="product-link"
-             data-name="${product.name.toLowerCase()}"
-             data-brand="${product.brand.toLowerCase()}">
-
+        <div class="product-link" data-name="${product.name.toLowerCase()}" data-brand="${product.brand.toLowerCase()}">
             <div class="card-custom">
-
-                <a href="/product/${product.id}"
-                   style="text-decoration:none;color:inherit;">
-
-                    <span class="product-tag">Featured</span>
-
-                    <div class="product-name">
-                        ${product.name.toUpperCase()}
-                    </div>
-
-                    <div class="product-brand">
-                        by ${product.brand}
-                    </div>
-
+                <a href="/product/${product.id}" style="text-decoration:none;color:inherit;">
+                    <span class="product-tag">${product.brand}</span>
+                    <div class="product-name">${product.name.toUpperCase()}</div>
                 </a>
-
                 <hr class="card-divider">
-
                 <div class="card-bottom">
-
                     <div class="price">
-
-                        <span>
-                            <i class="bi bi-currency-rupee"></i>
-                        </span>
-
-                        <span class="price-value">
-                            ${product.price}
-                        </span>
-
+                        <span><i class="bi bi-currency-rupee"></i></span>
+                        <span class="price-value">${product.price}</span>
                     </div>
-
-					<button
-					    type="button"
-					    class="btn-custom"
-					    onclick="addToCart('${product.id}', '${product.name}', '${product.price}', this)">
-					
-					    Add To Cart
-					
-					</button>
-
+                    <button type="button" class="btn-custom" onclick="addToCart('${product.id}', '${product.name}', '${product.price}', this)">
+                        Add To Cart
+                    </button>
                 </div>
-
             </div>
-
         </div>
-
     </c:forEach>
-
 </div>
 
-<!-- Cart Modal -->
+
 
 <div id="cartModal">
 
@@ -695,9 +574,7 @@
     </div>
 
 </div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
+<!-- Cart Modal & Scripts (Theme, Cart logic) must be pasted here too -->
 <script>
 
     // Theme
@@ -976,5 +853,6 @@
 
 </script>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

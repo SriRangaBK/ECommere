@@ -2,14 +2,12 @@ package com.proj.ecom_proj.model;
 
 import java.math.BigDecimal;
 import java.util.Date;
-
 import org.springframework.format.annotation.DateTimeFormat;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
-
 import jakarta.persistence.Entity;
-
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 //import lombok.AllArgsConstructor;
 //import lombok.NoArgsConstructor;
 
@@ -54,12 +52,7 @@ public class Product {
 	public void setPrice(BigDecimal price) {
 		this.price = price;
 	}
-	public String getCategory() {
-		return category;
-	}
-	public void setCategory(String category) {
-		this.category = category;
-	}
+
 	public Date getReleaseDate() {
 		return releaseDate;
 	}
@@ -94,7 +87,7 @@ public class Product {
     private String description;
     private String brand;
     private BigDecimal price;
-    private String category;
+    
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date releaseDate;
@@ -103,4 +96,10 @@ public class Product {
 
     private String imageName;
     private String imageType;
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
+	public void setCategory(Category category) {
+		this.category = category;
+	}
 }

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.proj.ecom_proj.model.Product;
+import com.proj.ecom_proj.model.Users;
 import com.proj.ecom_proj.service.ProductService;
 
 @RestController
@@ -32,6 +33,10 @@ public class ProductController {
 	public String addProduct(@ModelAttribute Product product) {
 	    service.addProduct(product); // Ensure this method exists in your service
 	    return "redirect:/"; // Redirects back to home after adding
+	}
+	@PostMapping("/users")
+	public Users registerUser(@ModelAttribute Users user) {
+		return service.registerUser(user);
 	}
 	@DeleteMapping("/products/{id}")
 	public void deleteProduct(@PathVariable int id) {
