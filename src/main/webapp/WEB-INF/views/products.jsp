@@ -452,31 +452,58 @@
     </style>
 </head>
 <body>
-
 <header>
     <nav class="navbar navbar-expand-lg fixed-top">
         <div class="container-fluid">
             <a class="navbar-brand" href="/">CarSell</a>
+            
             <div class="collapse navbar-collapse" id="navContent">
                 <ul class="navbar-nav me-auto">
-                    <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="/">Home</a></li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle active" href="#" data-bs-toggle="dropdown">Categories</a>
-                        <ul class="dropdown-menu shadow">
-                            <c:forEach items="${categories}" var="cat">
-                                <li><a class="dropdown-item" href="/category/${cat.id}">${cat.name}</a></li>
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">Categories</a>
+                        <ul class="dropdown-menu border-0 shadow" style="background: var(--surface); border: 1px solid var(--border) !important;">
+                            <c:forEach items="${categories}" var="category">
+                                <li><a class="dropdown-item" href="/category/${category.id}" style="color: var(--text-secondary); font-size: 0.8rem; text-transform: uppercase;">${category.name}</a></li>
                             </c:forEach>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="/" style="color: var(--accent); font-size: 0.8rem;">VIEW ALL</a></li>
                         </ul>
                     </li>
-                    <li class="nav-item"><a class="nav-link" href="/add_product">Add Product</a></li>
+                    <c:if test="${not empty user && user.role == 'admin'}">
+                        <li class="nav-item"><a class="nav-link" href="/add_product">Add Product</a></li>
+                    </c:if>
                 </ul>
-                <div class="navbar-right">
-                    <div class="cart-icon" onclick="viewCart()">
-                        <i class="bi bi-bag"></i><span id="cartCount" class="cart-badge">0</span>
-                    </div>
-                    <button class="theme-btn" id="themeToggle"><i class="bi bi-sun-fill"></i></button>
-                    <input class="search-input form-control" id="productSearch" type="search" placeholder="Search ${selectedCategory}...">
+            </div>
+
+            <div class="navbar-right">
+                <input type="text" id="productSearch" class="form-control search-input d-none d-md-block" placeholder="Search models...">
+
+                <button id="themeToggle" class="theme-btn">
+                    <i class="bi bi-sun-fill"></i>
+                </button>
+
+                <div class="cart-icon" onclick="viewCart()">
+                    <i class="bi bi-bag-handle"></i>
+                    <span class="cart-text">Cart</span>
+                    <span class="cart-badge" id="cartCount">0</span>
                 </div>
+
+                <c:choose>
+                    <c:when test="${not empty user}">
+                        <div class="d-flex align-items-center gap-3 ms-2">
+                            <span style="color: var(--text-secondary); font-size: 0.8rem; text-transform: uppercase;">
+                                <i class="bi bi-person-circle"></i> ${user.name}
+                            </span>
+                            <form action="/logout" method="post" style="margin:0;">
+                                <button class="btn-custom" style="padding: 8px 14px; font-size: 0.68rem;">Logout</button>
+                            </form>
+                        </div>
+                    </c:when>
+                    <c:otherwise>
+                        <a href="/login" class="nav-link">Login</a>
+                    </c:otherwise>
+                </c:choose>
             </div>
         </div>
     </nav>

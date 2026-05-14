@@ -34,12 +34,6 @@ public class ProductController {
 	    service.addProduct(product); // Ensure this method exists in your service
 	    return "redirect:/"; // Redirects back to home after adding
 	}
-	@PostMapping("/users")
-	public Users registerUser(@ModelAttribute Users user) {
-		return service.registerUser(user);
-	}
-	@DeleteMapping("/products/{id}")
-	public void deleteProduct(@PathVariable int id) {
-		service.deleteProduct(id);
-	}
+
+
 }

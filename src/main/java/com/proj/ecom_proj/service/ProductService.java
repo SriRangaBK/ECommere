@@ -23,22 +23,7 @@ public class ProductService {
 	private ProductRepo repo;
 	@Autowired
 	private CategoryRepo cRepo;
-	@Autowired
-	private UserRepo uRepo;	
-    @Autowired
-    private BCryptPasswordEncoder encoder;
-    
-    
-    public Users registerUser(Users user) {
 
-        String hashedPassword =
-                encoder.encode(user.getPasswordHash());
-
-        user.setPasswordHash(hashedPassword);
-
-        return uRepo.save(user);
-    }
-    
     
 	public List<Product> getAllProducts(){
 
@@ -48,7 +33,6 @@ public class ProductService {
 	}
 
 	public Product getProduct(int id) {
-		// TODO Auto-generated method stub
 		return repo.findById(id).orElse(new Product());
 	}
 

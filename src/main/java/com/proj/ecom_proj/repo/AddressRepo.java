@@ -5,11 +5,10 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import com.proj.ecom_proj.model.Address;
 import com.proj.ecom_proj.model.Users;
-import java.util.List;
-
 
 @Repository
-public interface UserRepo extends JpaRepository<Users, Integer>{
-	Optional<Users> findByEmail(String email);
+public interface AddressRepo extends JpaRepository<Address, Integer> {
+	 Optional<Address> findByUser(Users user);
 }

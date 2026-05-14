@@ -18,17 +18,43 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http)
+    public SecurityFilterChain securityFilterChain(
+            HttpSecurity http)
             throws Exception {
 
         http
             .csrf(csrf -> csrf.disable())
 
             .authorizeHttpRequests(auth -> auth
+
+                .requestMatchers(
+                    "/",
+                    "/login",
+                    "/register",
+                    "/api/users",
+                    "/css/**",
+                    "/js/**",
+                    "/images/**"
+                ).permitAll()
+
+                .requestMatchers(
+                    "/add_product"
+                ).authenticated()
+
                 .anyRequest().permitAll()
             )
 
-            .formLogin(form -> form.disable());
+            .formLogin(form -> form
+                .loginPage("/login")
+                .loginProcessingUrl("/login")
+                .defaultSuccessUrl("/", true)
+                .failureUrl("/login?error=true")
+                .permitAll()
+            )
+
+            .logout(logout -> logout
+                .logoutSuccessUrl("/login")
+            );
 
         return http.build();
     }
