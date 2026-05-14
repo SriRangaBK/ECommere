@@ -295,10 +295,34 @@ p, label, .product-brand, .cart-text {
                 </button>
 
                 <!-- Cart (Restored functional cartManager call) -->
-                <div class="cart-icon px-3 py-2" onclick="cartManager.toggleModal()" style="cursor:pointer; color: var(--text-primary); border: 1px solid var(--border); display: flex; align-items: center; gap: 8px;">
-                    <i class="bi bi-bag"></i>
-                    <span id="cartCount" class="badge bg-transparent text-white" style="font-size: 0.7rem; padding: 0;">0</span>
-                </div>
+                <div 
+    class="cart-icon px-3 py-2"
+    onclick="cart()"
+    id="cartContainer"
+    style="
+        cursor:pointer;
+        color: var(--text-primary);
+        border: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        border-radius: 8px;
+    ">
+
+    <i class="bi bi-bag"></i>
+
+    <span 
+        id="cartCount"
+        class="badge rounded-pill bg-danger text-white"
+        style="
+            font-size: 0.7rem;
+            padding: 4px 7px;
+            display:none;
+        ">
+        0
+    </span>
+
+</div>
 
                 <c:choose>
                     <c:when test="${not empty user}">
@@ -344,7 +368,7 @@ p, label, .product-brand, .cart-text {
                     
                     <div class="price-container">
                         <div class="price-value">₹ ${product.price}</div>
-                        <button class="btn-action" onclick="cartManager.addItem('${product.id}', '${product.name}', ${product.price}, this)">
+                        <button class="btn-action" onclick="addToCart('${product.id}')">
                             Select
                         </button>
                     </div>
@@ -413,73 +437,55 @@ p, label, .product-brand, .cart-text {
             });
         }
     };
+    function cart(){
+    	window.location.href = "/cart"
+    }
+    function addToCart(productId) {
 
-    /**
-     * Cart Manager (Modular)
-     */
-    const cartManager = {
-        data: JSON.parse(localStorage.getItem('carsell_cart')) || [],
+        fetch("/cart/add/" + productId, {
+            method: "POST"
+        })
+        .then(response => response.text())
+        .then(data => {
 
-        addItem(id, name, price, btn) {
-            const existing = this.data.find(i => i.id === id);
-            if (existing) existing.qty++;
-            else this.data.push({ id, name, price, qty: 1 });
+            let count = document.getElementById("cartCount");
 
-            this.sync();
-            btn.innerText = "Added";
-            setTimeout(() => btn.innerText = "Select", 1000);
-        },
+            let current = parseInt(count.innerText || "0");
 
-        removeItem(index) {
-            this.data.splice(index, 1);
-            this.sync();
-            this.render();
-        },
+            updateCartIndicator(current + 1);
 
-        sync() {
-            localStorage.setItem('carsell_cart', JSON.stringify(this.data));
-            document.getElementById('cartCount').innerText = this.data.length;
-        },
+        })
+        .catch(error => {
+            console.error(error);
+        });
+    }
+    function updateCartIndicator(count) {
 
-        toggleModal() {
-            const modal = document.getElementById('cartModal');
-            const isOpen = modal.style.display === 'grid';
-            modal.style.display = isOpen ? 'none' : 'grid';
-            if (!isOpen) this.render();
-        },
+        const badge = document.getElementById("cartCount");
+        const container = document.getElementById("cartContainer");
 
-        render() {
-            const container = document.getElementById('cartItems');
-            const totalEl = document.getElementById('cartTotal');
-            let total = 0;
+        if(count > 0){
 
-            container.innerHTML = this.data.length ? '' : '<p class="text-muted italic">No selections made.</p>';
+            badge.style.display = "inline-block";
+            badge.innerText = count;
 
-            this.data.forEach((item, idx) => {
-                total += item.price * item.qty;
-                const div = document.createElement('div');
-                div.className = "d-flex justify-content-between align-items-center mb-3";
-                div.innerHTML = `
-                    <div>
-                        <div class="small text-uppercase text-muted" style="font-size:0.6rem;">\${item.qty}x</div>
-                        <div>\${item.name}</div>
-                    </div>
-                    <div class="text-end">
-                        <div>₹ \${(item.price * item.qty).toLocaleString()}</div>
-                        <i class="bi bi-x-circle text-danger" style="cursor:pointer" onclick="cartManager.removeItem(\${idx})"></i>
-                    </div>
-                `;
-                container.appendChild(div);
-            });
+            container.style.border = "1px solid #28a745";
+            container.style.backgroundColor = "#1f2d1f";
 
-            totalEl.innerText = `₹ \${total.toLocaleString()}`;
+        } else {
+
+            badge.style.display = "none";
+
+            container.style.border = "1px solid var(--border)";
+            container.style.backgroundColor = "transparent";
         }
-    };
+    }
+	
 
     // Initialize all
     themeController.init();
     searchController.init();
-    cartManager.sync();
+ 
 </script>
 
 </body>

@@ -4,13 +4,13 @@
         type="email"
         name="username"
         placeholder="Email"
-        value="srirangabk7@gmail.com">
+        value="leeChong101@gmail.com">
 
     <input
         type="password"
         name="password"
         placeholder="Password"
-        value="Sriranga@07">
+        value="heehaw">
 
     <button type="submit">
         Login

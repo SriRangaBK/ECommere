@@ -1,5 +1,8 @@
 package com.proj.ecom_proj.controller;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -8,8 +11,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import com.proj.ecom_proj.model.Address;
+import com.proj.ecom_proj.model.Orders;
 import com.proj.ecom_proj.model.Users;
 import com.proj.ecom_proj.repo.AddressRepo;
+import com.proj.ecom_proj.repo.OrderRepo;
 import com.proj.ecom_proj.repo.UserRepo;
 import com.proj.ecom_proj.service.ProductService;
 import com.proj.ecom_proj.service.UserService;
@@ -22,7 +27,8 @@ public class HomeController {
     private UserRepo uRepo;
     @Autowired
     private AddressRepo addrRepo;
-
+    @Autowired
+    private OrderRepo oRepo;
     @GetMapping("/")
     public String home(Model model,
             @AuthenticationPrincipal org.springframework.security.core.userdetails.User userDetails) {
@@ -79,8 +85,10 @@ public class HomeController {
             @AuthenticationPrincipal org.springframework.security.core.userdetails.User userDetails) {
     	Users user = uRepo.findByEmail(userDetails.getUsername()).orElse(null);
     	Address address = addrRepo.findByUser(user).orElse(null);
+    	Optional<Orders> orders = oRepo.findByUser(user);
     	model.addAttribute("address", address);
     	model.addAttribute("user",user);
+    	model.addAttribute("orders",orders);
 		return "profile";
     	
     }
