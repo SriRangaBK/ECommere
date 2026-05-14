@@ -35,7 +35,7 @@
             --text-secondary: #57534e;
             --navbar-blur: rgba(253, 252, 249, 0.9);
         }
-
+	
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
@@ -50,7 +50,50 @@
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: var(--bg); }
         ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+	h1, h2, h3, h4, h5, h6, .product-name, .section-title {
+    color: var(--text-primary);
+}
 
+p, label, .product-brand, .cart-text {
+    color: var(--text-secondary);
+}
+
+/* Links & Nav Items */
+.nav-link {
+    color: var(--text-secondary) !important;
+    transition: color 0.3s ease;
+}
+
+.nav-link:hover, .nav-link.active {
+    color: var(--accent) !important;
+}
+
+/* Dropdown refinement */
+.dropdown-item {
+    color: var(--text-primary);
+    transition: background 0.2s ease;
+}
+
+.dropdown-item:hover {
+    background: var(--accent-glow);
+    color: var(--accent);
+}
+
+/* Form Inputs (Luxury Style) */
+.luxury-input {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-primary);
+    padding: 10px 0;
+    width: 100%;
+    transition: border-color 0.3s ease;
+}
+
+.luxury-input:focus {
+    outline: none;
+    border-color: var(--accent);
+}
         /* --- Navbar --- */
         .navbar {
             background: var(--navbar-blur) !important;
@@ -209,23 +252,60 @@
         <div class="container-fluid">
             <a class="navbar-brand" href="/">CarSell</a>
             
-            <div class="navbar-right">
+            <!-- Mobile Toggle Button -->
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-content="#navContent" style="color: var(--accent);">
+                <i class="bi bi-list"></i>
+            </button>
+
+            <!-- Original Nav Links & Categories (Restored) -->
+            <div class="collapse navbar-collapse" id="navContent">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item"><a class="nav-link active" href="/">Home</a></li>
+                    
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                            Categories
+                        </a>
+                        <ul class="dropdown-menu border-0 shadow" style="background: var(--surface); border: 1px solid var(--border) !important;">
+                            <c:forEach items="${categories}" var="category">
+                                <li>
+                                    <a class="dropdown-item" href="/category/${category.id}" style="color: var(--text-secondary); font-size: 0.8rem; text-transform: uppercase;">
+                                        ${category.name}
+                                    </a>
+                                </li>
+                            </c:forEach>
+                            <li><hr class="dropdown-divider bg-secondary"></li>
+                            <li><a class="dropdown-item" href="/" style="color: var(--accent); font-size: 0.8rem;">VIEW ALL</a></li>
+                        </ul>
+                    </li>
+
+                    <!-- Admin Link (Restored) -->
+                    <c:if test="${not empty user && user.role == 'admin'}">
+                        <li class="nav-item"><a class="nav-link" href="/add_product">Add Product</a></li>
+                    </c:if>
+                </ul>
+            </div>
+
+            <!-- Luxury Navbar Right (Updated Styles) -->
+            <div class="navbar-right d-flex align-items-center gap-2">
                 <input type="text" id="productSearch" class="form-control search-input d-none d-md-block" placeholder="Filter inventory...">
 
                 <button id="themeToggle" class="btn btn-link text-decoration-none" style="color: var(--accent);">
                     <i class="bi bi-brightness-high"></i>
                 </button>
 
-                <div class="cart-icon px-3 py-2" onclick="cartManager.toggleModal()" style="cursor:pointer; color: var(--text-primary); border: 1px solid var(--border);">
+                <!-- Cart (Restored functional cartManager call) -->
+                <div class="cart-icon px-3 py-2" onclick="cartManager.toggleModal()" style="cursor:pointer; color: var(--text-primary); border: 1px solid var(--border); display: flex; align-items: center; gap: 8px;">
                     <i class="bi bi-bag"></i>
-                    <span id="cartCount" class="badge bg-transparent text-white" style="font-size: 0.7rem;">0</span>
+                    <span id="cartCount" class="badge bg-transparent text-white" style="font-size: 0.7rem; padding: 0;">0</span>
                 </div>
 
                 <c:choose>
                     <c:when test="${not empty user}">
+                        <!-- Luxury Profile Dropdown (Updated Style) -->
                         <div class="dropdown">
-                            <button class="btn-action dropdown-toggle" data-bs-toggle="dropdown">
-                                ${user.name}
+                            <button class="btn-action dropdown-toggle" data-bs-toggle="dropdown" style="text-transform: uppercase; letter-spacing: 1px;">
+                                <i class="bi bi-person-circle"></i> ${user.name}
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end" style="background: var(--surface); border: 1px solid var(--border);">
                                 <li><a class="dropdown-item text-white" href="/profile">My Profile</a></li>
@@ -246,7 +326,6 @@
         </div>
     </nav>
 </header>
-
 <main class="page-container">
     <div class="section-header">
         <h1 class="section-title">Current Inventory</h1>
