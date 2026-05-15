@@ -317,9 +317,9 @@ p, label, .product-brand, .cart-text {
         style="
             font-size: 0.7rem;
             padding: 4px 7px;
-            display:none;
+            <c:if test='${cartSize == 0}'>display:none;</c:if>">
         ">
-        0
+        ${cartSize}
     </span>
 
 </div>
@@ -459,27 +459,7 @@ p, label, .product-brand, .cart-text {
             console.error(error);
         });
     }
-    function updateCartIndicator(count) {
 
-        const badge = document.getElementById("cartCount");
-        const container = document.getElementById("cartContainer");
-
-        if(count > 0){
-
-            badge.style.display = "inline-block";
-            badge.innerText = count;
-
-            container.style.border = "1px solid #28a745";
-            container.style.backgroundColor = "#1f2d1f";
-
-        } else {
-
-            badge.style.display = "none";
-
-            container.style.border = "1px solid var(--border)";
-            container.style.backgroundColor = "transparent";
-        }
-    }
 	
 
     // Initialize all

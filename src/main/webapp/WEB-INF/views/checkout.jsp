@@ -1,15 +1,17 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Shopping Bag | CarSell</title>
+    <title>Secure Checkout | CarSell</title>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;600&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <style>
         :root {
             --bg: #0a0a0c;
@@ -112,93 +114,101 @@ p, label, .product-brand, .cart-text {
         	display: flex;
         }
 
+        .checkout-container { max-width: 1200px; margin: auto; padding: 40px 20px; }
+        
         .section-title {
             font-family: 'Cormorant Garamond', serif;
-            font-size: 3rem;
-            margin-bottom: 2rem;
+            font-size: 2.5rem;
+            letter-spacing: -1px;
+            margin-bottom: 30px;
         }
 
-        /* Cart Item Styling */
-        .cart-card {
+        .checkout-card {
             background: var(--surface);
             border: 1px solid var(--border);
-            padding: 25px;
-            margin-bottom: 1.5rem;
-            transition: 0.3s;
+            padding: 30px;
+            margin-bottom: 25px;
         }
 
-        .cart-card:hover {
-            border-color: var(--accent);
+        .step-label {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--accent);
+            display: block;
+            margin-bottom: 10px;
         }
 
-        .vehicle-thumb {
-            width: 140px;
-            height: 90px;
-            object-fit: cover;
+        .address-preview {
+            border-left: 2px solid var(--accent);
+            padding-left: 20px;
+            margin-top: 15px;
+        }
+
+        /* Summary Sidebar */
+        .summary-sidebar {
+            background: var(--surface);
             border: 1px solid var(--border);
+            padding: 30px;
+            position: sticky;
+            top: 100px;
         }
 
-        .price-value {
+        .item-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+
+        .total-row {
+            border-top: 1px solid var(--border);
+            padding-top: 20px;
+            margin-top: 20px;
             font-family: 'Cormorant Garamond', serif;
-            font-size: 1.4rem;
+            font-size: 1.5rem;
             color: var(--accent);
         }
 
-        /* Footer Summary */
-        .cart-summary {
-            background: var(--surface);
-            border-top: 2px solid var(--accent);
-            padding: 30px;
-            margin-top: 3rem;
+        /* Form Inputs */
+        .form-control-luxury {
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-primary);
+            border-radius: 0;
+            padding: 12px 0;
+            margin-bottom: 20px;
         }
 
-        /* Buttons */
-        .btn-luxury {
+        .form-control-luxury:focus {
+            background: transparent;
+            box-shadow: none;
+            border-color: var(--accent);
+            color: var(--text-primary);
+        }
+
+        .btn-pay {
             background: var(--accent);
             color: #000;
             border: none;
-            padding: 15px 40px;
+            width: 100%;
+            padding: 18px;
             text-transform: uppercase;
-            letter-spacing: 2px;
-            font-size: 0.8rem;
             font-weight: 700;
+            letter-spacing: 2px;
+            font-size: 0.85rem;
             transition: 0.3s;
-            text-decoration: none;
-            display: inline-block;
+            margin-top: 20px;
         }
 
-        .btn-luxury:hover {
+        .btn-pay:hover {
             background: #fff;
             transform: translateY(-3px);
-        }
-
-        .btn-outline-luxury {
-            border: 1px solid var(--border);
-            color: var(--text-secondary);
-            padding: 12px 30px;
-            text-transform: uppercase;
-            font-size: 0.7rem;
-            text-decoration: none;
-            transition: 0.3s;
-        }
-
-        .btn-outline-luxury:hover {
-            color: var(--accent);
-            border-color: var(--accent);
-        }
-
-        .remove-link {
-            color: #ff4d4d;
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            cursor: pointer;
-            text-decoration: none;
-            letter-spacing: 1px;
         }
     </style>
 </head>
 <body>
-
 <header>
     <nav class="navbar navbar-expand-lg fixed-top">
         <div class="container-fluid">
@@ -303,96 +313,118 @@ p, label, .product-brand, .cart-text {
     </nav>
 </header>
 
-<div class="container py-5">
-    <div class="row">
-        <div class="col-lg-8">
-            <h1 class="section-title">Your Bag</h1>
+<div class="checkout-container">
+    <div class="row g-5">
+        <div class="col-lg-7">
+            <h1 class="section-title">Checkout</h1>
 
-            <c:choose>
-                <c:when test="${empty items}">
-                    <div class="text-center py-5" style="border: 1px dashed var(--border);">
-                        <i class="bi bi-bag-x text-muted" style="font-size: 3rem;"></i>
-                        <p class="mt-3 text-secondary italic">Your showroom selection is empty.</p>
-                        <a href="/" class="btn-luxury mt-4">Browse Showroom</a>
+            <div class="checkout-card">
+                <span class="step-label">01 Customer Information</span>
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <p class="mb-0 text-primary">${user.name}</p>
+                        <p class="text-secondary small">${user.email}</p>
                     </div>
-                </c:when>
-
-                <c:otherwise>
-                    <c:forEach items="${items}" var="item">
-                        <div class="cart-card d-flex align-items-center gap-4">
-                            <img src="/api/products/${item.product.id}/image" alt="${item.product.name}" class="vehicle-thumb d-none d-md-block">
-                            
-                            <div class="flex-grow-1">
-                                <span class="text-accent small text-uppercase" style="letter-spacing: 2px;">${item.product.brand}</span>
-                                <h3 class="h5 text-primary mb-1">${item.product.name}</h3>
-                                <p class="text-secondary small">Quantity: ${item.quantity}</p>
-                                <span class="remove-link" onclick="removeFromCart(${item.product.id})">
-                                    <i class="bi bi-trash3 me-1"></i> Remove Selection
-                                </span>
-                            </div>
-
-                            <div class="text-end">
-                                <div class="price-value">₹${item.product.price}</div>
-                                <p class="text-muted small">Excluding tax</p>
-                            </div>
-                        </div>
-                    </c:forEach>
-                    
-                    <div class="mt-4">
-                        <a href="/" class="btn-outline-luxury">
-                            <i class="bi bi-arrow-left me-2"></i> Continue Selection
-                        </a>
-                    </div>
-                </c:otherwise>
-            </c:choose>
-        </div>
-
-        <c:if test="${not empty items}">
-            <div class="col-lg-4">
-                <div class="cart-summary sticky-top" style="top: 120px;">
-                    <h2 class="h4 mb-4" style="font-family: 'Cormorant Garamond', serif;">Order Summary</h2>
-                    
-                    <div class="d-flex justify-content-between mb-2">
-                        <span class="text-secondary">Subtotal</span>
-                        <span class="text-primary" id="subtotal">Calculated at Checkout</span>
-                    </div>
-                    <div class="d-flex justify-content-between mb-4">
-                        <span class="text-secondary">Logistics</span>
-                        <span class="text-success small uppercase">Complimentary</span>
-                    </div>
-
-                    <hr style="border-color: var(--border);">
-                    
-                    <a href="/checkout" class="btn-luxury w-100 text-center">
-                        Secure Checkout <i class="bi bi-chevron-right ms-2"></i>
-                    </a>
-                    
-                    <p class="text-center mt-3 text-muted" style="font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1px;">
-                        <i class="bi bi-shield-lock-fill me-1"></i> Encrypted Transaction
-                    </p>
+                    <i class="bi bi-check-circle-fill text-success"></i>
                 </div>
             </div>
-        </c:if>
-    </div>
+
+            <div class="checkout-card">
+                <span class="step-label">02 Delivery Destination</span>
+                <c:choose>
+                    <c:when test="${not empty address}">
+                        <div class="address-preview">
+                            <p class="mb-1">${address.street}</p>
+                            <p class="mb-0 text-secondary small">${address.city}, ${address.state} ${address.pincode}</p>
+                        </div>
+                        <div class="mt-3">
+                            <a href="/profile" class="text-accent small text-decoration-none">Change Address</a>
+                        </div>
+                    </c:when>
+                    <c:otherwise>
+                        <p class="text-danger small">No primary address found on record.</p>
+                        <a href="/profile" class="btn-pay py-2 text-center text-decoration-none d-inline-block" style="width: auto; padding: 10px 20px;">Add Address</a>
+                    </c:otherwise>
+                </c:choose>
+            </div>
+
+  <div class="checkout-card">
+    <span class="step-label">03 Formal Authorization</span>
+    
+    <form id="checkoutForm" action="/orders/place" method="POST">
+        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+
+        <div class="py-3">
+            <p class="text-primary mb-2" style="letter-spacing: 1px;">Confirm Acquisition</p>
+            <p class="text-secondary small italic mb-4">
+                This is a simulated transaction. By proceeding, you are authorizing the system to 
+                finalize your order manifest and allocate the inventory to your profile.
+            </p>
+            
+            <div class="form-check custom-check mb-3">
+                <input class="form-check-input" type="checkbox" id="terms" required 
+                       style="border-color: var(--accent); ">
+                <label class="form-check-label text-secondary small" for="terms">
+                    I confirm that the delivery details provided are correct.
+                </label>
+            </div>
+            
+            <div class="form-check custom-check">
+                <input class="form-check-input" type="checkbox" id="auth" required 
+                       style="border-color: var(--accent); ">
+                <label class="form-check-label text-secondary small" for="auth">
+                    I agree to the simulated acquisition terms.
+                </label>
+            </div>
+        </div>
+    </form>
 </div>
 
-<script>
-function removeFromCart(productId) {
-    // Luxury Confirmation
-    if(!confirm("Are you sure you want to remove this vehicle from your selection?")) return;
+        <div class="col-lg-5">
+            <div class="summary-sidebar">
+                <span class="step-label">Order Manifest</span>
+                
+                <div class="order-items-mini mb-4">
+                    <c:forEach items="${orderItems}" var="item">
+                        <div class="item-row">
+                            <span class="text-secondary">${item.quantity}x ${item.product.name}</span>
+                            <span class="text-primary">₹${item.priceAtPurchase}</span>
+                        </div>
+                    </c:forEach>
+                </div>
 
-    fetch("/cart/delete/" + productId, {
-        method: "DELETE"
-    })
-    .then(response => {
-        if(response.ok) {
-            location.reload();
-        } else {
-            alert("Error updating bag.");
-        }
-    })
-    .catch(error => console.error(error));
-}
+                <div class="costs">
+                    <div class="item-row">
+                        <span class="text-secondary">Subtotal</span>
+                        <span class="text-primary">₹${subtotal}</span>
+                    </div>
+                    <div class="item-row">
+                        <span class="text-secondary">Shipping & Handling</span>
+                        <span class="text-primary">₹${shipping}</span>
+                    </div>
+                    <div class="item-row">
+                        <span class="text-secondary">GST (18%)</span>
+                        <span class="text-primary">₹<fmt:formatNumber value="${tax}" maxFractionDigits="2"/></span>
+                    </div>
+                    
+                    <div class="total-row d-flex justify-content-between">
+                        <span>Grand Total</span>
+                        <span>₹<fmt:formatNumber value="${grandTotal}" maxFractionDigits="2"/></span>
+                    </div>
+                </div>
+
+                <button type="submit" form="checkoutForm" class="btn-pay">
+                    Complete Acquisition <i class="bi bi-lock-fill ms-2"></i>
+                </button>
+                
+                <p class="text-center mt-4 text-muted" style="font-size: 0.6rem; letter-spacing: 1px; text-transform: uppercase;">
+                    Verified Secure Transaction &middot; CarSell Financial Services
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
 const themeController = {
         init() {
             const saved = localStorage.getItem('carsell_theme');
@@ -406,6 +438,5 @@ const themeController = {
     };
 themeController.init();
 </script>
-
 </body>
 </html>

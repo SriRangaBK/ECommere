@@ -483,12 +483,12 @@
                     <i class="bi bi-sun-fill"></i>
                 </button>
 
-                <div class="cart-icon" onclick="viewCart()">
-                    <i class="bi bi-bag-handle"></i>
-                    <span class="cart-text">Cart</span>
-                    <span class="cart-badge" id="cartCount">0</span>
-                </div>
-
+<div class="cart-icon px-3 py-2" onclick="window.location.href='/cart'" id="cartContainer"
+    style="cursor:pointer; color: var(--text-primary); border: 1px solid var(--border); display: flex; align-items: center; gap: 8px; border-radius: 8px;">
+    <i class="bi bi-bag"></i>
+    <span id="cartCount" class="badge rounded-pill bg-danger text-white" 
+          style="font-size: 0.7rem; padding: 4px 7px; display:none;">0</span>
+</div>
                 <c:choose>
                     <c:when test="${not empty user}">
                         <div class="d-flex align-items-center gap-3 ms-2">
@@ -540,67 +540,6 @@
 
 
 
-<div id="cartModal">
-
-    <div class="cart-modal-content">
-
-        <h2 class="modal-title">Your Selection</h2>
-
-        <div id="cartItems"
-             style="max-height:300px;overflow-y:auto;margin-bottom:20px;">
-
-        </div>
-
-        <div style="
-            border-top:1px solid var(--border);
-            padding-top:16px;
-
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
-        ">
-
-            <span style="color:var(--text-secondary);">
-                Total
-            </span>
-
-            <span id="cartTotal"
-                  style="font-weight:bold;">
-
-                ₹ 0
-
-            </span>
-
-        </div>
-
-        <div class="mt-4 d-flex gap-2">
-
-            <button class="btn-custom"
-                    style="flex:1;"
-                    onclick="alert('Proceeding to checkout...')">
-
-                Checkout
-
-            </button>
-
-            <button class="btn-custom"
-                    style="
-                        flex:1;
-                        background:transparent;
-                        color:var(--text-secondary);
-                        border:1px solid var(--border);
-                    "
-                    onclick="closeCart()">
-
-                Close
-
-            </button>
-
-        </div>
-
-    </div>
-
-</div>
 <!-- Cart Modal & Scripts (Theme, Cart logic) must be pasted here too -->
 <script>
 
@@ -647,237 +586,39 @@
             localStorage.setItem('theme', 'dark');
         }
     });
-
-    // Search
-
-    const searchInput = document.getElementById('productSearch');
-
-    const productLinks = document.querySelectorAll('.product-link');
-
-    const countDisplay = document.getElementById('countDisplay');
-
-    searchInput.addEventListener('input', (e) => {
-
-        const query = e.target.value.toLowerCase().trim();
-
-        let visibleCount = 0;
-
-        productLinks.forEach(link => {
-
-            const name = link.getAttribute('data-name');
-
-            const brand = link.getAttribute('data-brand');
-
-            if (
-                name.includes(query) ||
-                brand.includes(query)
-            ) {
-
-                link.style.display = 'block';
-
-                visibleCount++;
-
-            } else {
-
-                link.style.display = 'none';
+    function addToCart(productId) {
+        fetch("/cart/add/" + productId, {
+            method: "POST"
+        })
+        .then(response => {
+            if(response.ok) {
+                updateCartIndicator();
             }
-        });
-
-        countDisplay.innerText = visibleCount + ' items';
-    });
-
-    // Cart
-
-    let cart =
-        JSON.parse(
-            localStorage.getItem('carsell_cart')
-        ) || [];
-
-    function saveCart() {
-
-        localStorage.setItem(
-            'carsell_cart',
-            JSON.stringify(cart)
-        );
+        })
+        .catch(error => console.error('Error:', error));
     }
+    const searchController = {
+            init() {
+                const input = document.getElementById('productSearch');
+                const items = document.querySelectorAll('.product-item');
+                const counter = document.getElementById('countDisplay');
 
-    function updateCartUI() {
+                input.addEventListener('input', (e) => {
+                    const query = e.target.value.toLowerCase();
+                    let visible = 0;
 
-        const countElement =
-            document.getElementById('cartCount');
+                    items.forEach(item => {
+                        const match = item.dataset.name.includes(query) || item.dataset.brand.includes(query);
+                        item.style.display = match ? 'block' : 'none';
+                        if (match) visible++;
+                    });
 
-        countElement.innerText = cart.length;
-
-        if (cart.length > 0) {
-
-            countElement.style.display = 'flex';
-
-        } else {
-
-            countElement.style.display = 'none';
-        }
-
-        saveCart();
-    }
-
-    function addToCart(id, name, price, button) {
-
-        const existingItem = cart.find(
-            item => item.id === id
-        );
-
-        if (existingItem) {
-
-            existingItem.quantity += 1;
-
-        } else {
-
-            cart.push({
-                id: id,
-                name: name,
-                price: Number(price),
-                quantity: 1
-            });
-        }
-
-        localStorage.setItem(
-            'carsell_cart',
-            JSON.stringify(cart)
-        );
-
-        updateCartUI();
-
-        button.innerText = 'Added';
-
-        setTimeout(() => {
-
-            button.innerText = 'Add To Cart';
-
-        }, 1000);
-    }
-
-    function viewCart() {
-
-        const modal =
-            document.getElementById('cartModal');
-
-        const itemsContainer =
-            document.getElementById('cartItems');
-
-        const totalElement =
-            document.getElementById('cartTotal');
-
-        itemsContainer.innerHTML = '';
-
-        let total = 0;
-
-        if (cart.length === 0) {
-
-            itemsContainer.innerHTML = `
-                <p style="
-                    color: var(--text-muted);
-                    font-style: italic;
-                ">
-                    Your cart is empty.
-                </p>
-            `;
-
-        } else {
-
-            cart.forEach((item, index) => {
-
-                const itemTotal =
-                    Number(item.price) * Number(item.quantity);
-
-                total += itemTotal;
-
-                const row = document.createElement('div');
-
-                row.style.display = 'flex';
-                row.style.justifyContent = 'space-between';
-                row.style.alignItems = 'center';
-                row.style.padding = '14px 0';
-                row.style.borderBottom =
-                    '1px solid var(--border)';
-
-                row.innerHTML = `
-
-                    <div>
-
-                	<div class="cart-product-name">
-                    \${item.name}
-                	</div>
-
-                        <div style="
-                            color: var(--text-secondary);
-                            font-size: 0.82rem;
-                        ">
-                            Qty: \${item.quantity}
-                        </div>
-
-                    </div>
-
-                    <div style="
-                        text-align: right;
-                        color: var(--text-primary);
-                    ">
-
-                        <div>
-                            ₹ \${itemTotal.toFixed(2)}
-                        </div>
-
-                        <i
-                            class="bi bi-trash"
-                            onclick="removeFromCart(${index})"
-                            style="
-                                color: #ff5c5c;
-                                cursor: pointer;
-                                margin-top: 6px;
-                                display: inline-block;
-                            ">
-                        </i>
-
-                    </div>
-                `;
-
-                itemsContainer.appendChild(row);
-            });
-        }
-
-        totalElement.innerText =
-            '₹ ' + total.toFixed(2);
-
-        modal.style.display = 'block';
-    }
-
-    function removeFromCart(index) {
-
-        cart.splice(index, 1);
-
-        updateCartUI();
-
-        viewCart();
-    }
-
-    function closeCart() {
-
-        document.getElementById('cartModal')
-            .style.display = 'none';
-    }
-
-    window.onclick = function(event) {
-
-        const modal =
-            document.getElementById('cartModal');
-
-        if (event.target === modal) {
-
-            closeCart();
-        }
-    };
-
-    updateCartUI();
-
+                    counter.innerText = `\${visible} models found`;
+                });
+            }
+        };
+    searchController.init();
+    
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

@@ -3,6 +3,7 @@ package com.proj.ecom_proj.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -38,9 +39,11 @@ public class CartController {
 	}
 	
 	@DeleteMapping("/cart/delete/{productId}")
-	public String deleteFromCart(@PathVariable int productId, @AuthenticationPrincipal org.springframework.security.core.userdetails.User userDetails) {
-		service.deleteFromCart( productId, userDetails.getUsername());
-		return "Removed from cart";
-		
+	public ResponseEntity<String> deleteFromCart(
+	        @PathVariable int productId,
+	        @AuthenticationPrincipal org.springframework.security.core.userdetails.User userDetails
+	) {
+	    service.deleteFromCart(productId, userDetails.getUsername());
+	    return ResponseEntity.ok("Removed from cart");
 	}
 }

@@ -5,10 +5,9 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.proj.ecom_proj.model.Orders;
-import com.proj.ecom_proj.model.Users;
+import com.proj.ecom_proj.model.OrderItems;
 
 @Repository
-public interface OrderRepo extends JpaRepository<Orders, Integer> {
-	List<Orders> findByUser(Users user);
+public interface OrderItemsRepo extends JpaRepository<OrderItems, Integer>{
+	List<OrderItems> findByOrderId(int orderId);
 }

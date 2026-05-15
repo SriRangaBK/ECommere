@@ -1,6 +1,8 @@
 package com.proj.ecom_proj.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,11 +13,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import com.proj.ecom_proj.model.Address;
+import com.proj.ecom_proj.model.CartItems;
+import com.proj.ecom_proj.model.OrderItems;
 import com.proj.ecom_proj.model.Orders;
 import com.proj.ecom_proj.model.Users;
 import com.proj.ecom_proj.repo.AddressRepo;
 import com.proj.ecom_proj.repo.OrderRepo;
 import com.proj.ecom_proj.repo.UserRepo;
+import com.proj.ecom_proj.service.CartService;
+import com.proj.ecom_proj.service.OrderService;
 import com.proj.ecom_proj.service.ProductService;
 import com.proj.ecom_proj.service.UserService;
 
@@ -23,12 +29,16 @@ import com.proj.ecom_proj.service.UserService;
 public class HomeController {
     @Autowired
     private ProductService service;
+	@Autowired
+	private CartService cService;
     @Autowired
     private UserRepo uRepo;
     @Autowired
     private AddressRepo addrRepo;
     @Autowired
     private OrderRepo oRepo;
+    @Autowired
+    private OrderService oService;
     @GetMapping("/")
     public String home(Model model,
             @AuthenticationPrincipal org.springframework.security.core.userdetails.User userDetails) {
@@ -39,7 +49,10 @@ public class HomeController {
             Users user = uRepo.findByEmail(email).orElse(null);
             model.addAttribute("user", user);
         }
-
+        List<CartItems> items =
+                cService.getCartItems(
+                        userDetails.getUsername());
+        model.addAttribute("cartSize",items.size());
         model.addAttribute("products", service.getAllProducts());
         model.addAttribute("categories", service.getAllCategories());
 
@@ -85,12 +98,58 @@ public class HomeController {
             @AuthenticationPrincipal org.springframework.security.core.userdetails.User userDetails) {
     	Users user = uRepo.findByEmail(userDetails.getUsername()).orElse(null);
     	Address address = addrRepo.findByUser(user).orElse(null);
-    	Optional<Orders> orders = oRepo.findByUser(user);
+    	List<Orders> orders = oRepo.findByUser(user);
+    	Map<Integer, List<OrderItems>> orderMap = new HashMap<>();
+    	for(Orders order : orders) {
+    	    orderMap.put(order.getId(), oService.getOrderItems(order.getId()));
+    	}
+    	model.addAttribute("orderMap", orderMap);
     	model.addAttribute("address", address);
     	model.addAttribute("user",user);
     	model.addAttribute("orders",orders);
 		return "profile";
     	
+    }
+    
+    @GetMapping("/checkout")
+    public String checkout(
+            Model model,
+            @AuthenticationPrincipal
+            org.springframework.security.core.userdetails.User userDetails) {
+
+        Users user =
+                uRepo.findByEmail(userDetails.getUsername())
+                     .orElse(null);
+
+        Address address =
+                addrRepo.findByUser(user)
+                        .orElse(null);
+
+        List<CartItems> items =
+                cService.getCartItems(
+                        userDetails.getUsername());
+
+        double subtotal =
+                items.stream()
+                     .mapToDouble(i ->
+                         i.getProduct()
+                          .getPrice()
+                          .doubleValue()
+                         * i.getQuantity())
+                     .sum();
+
+        double shipping = 50;
+        double tax = subtotal * 0.18;      // 18% GST
+        double grandTotal = subtotal + shipping + tax;
+
+        model.addAttribute("user", user);
+        model.addAttribute("address", address);
+        model.addAttribute("items", items);
+        model.addAttribute("subtotal", subtotal);
+        model.addAttribute("shipping", shipping);
+        model.addAttribute("tax", tax);
+        model.addAttribute("grandTotal", grandTotal);
+        return "checkout";
     }
 
 }

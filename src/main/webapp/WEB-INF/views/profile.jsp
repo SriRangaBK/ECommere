@@ -762,57 +762,85 @@ p, label, .product-brand, .cart-text {
     <h1 class="section-title">Order Ledger</h1>
 
     <c:choose>
-        <c:when test="${orders.present}">
-            <c:set var="o" value="${orders.get()}" />
+        <%-- Use 'not empty' because it is now a List, not an Optional --%>
+        <c:when test="${not empty orders}">
             
-            <div class="order-ledger-card">
-                <div class="order-header">
-                    <div class="order-meta">
-                        <!-- Changed to match getId() -->
-                        <span class="order-id">REF: #CAR-${o.id}</span>
-                        
-                        <div class="status-pill-container mt-2">
-                            <!-- Changed to match getOrderStatus() -->
-                            <span class="status-badge status-${o.orderStatus.toLowerCase()}">
-                                ${o.orderStatus}
-                            </span>
-                            <!-- Changed to match getPaymentStatus() -->
-                            <span class="status-badge status-${o.paymentStatus.toLowerCase()}">
-                                PAY: ${o.paymentStatus}
-                            </span>
+            <%-- Loop through each order in the list --%>
+            <c:forEach items="${orders}" var="o">
+                <div class="order-ledger-card mb-5">
+                    <div class="order-header d-flex justify-content-between align-items-start">
+                        <div class="order-meta">
+                            <span class="order-id">REF: #CAR-${o.id}</span>
+                            <div class="status-pill-container mt-2">
+                                <span class="status-badge status-${o.orderStatus.toLowerCase()}">
+                                    ${o.orderStatus}
+                                </span>
+                                <span class="status-badge status-${o.paymentStatus.toLowerCase()}">
+                                    PAY: ${o.paymentStatus}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="order-date-ui text-end">
+                            <p class="text-secondary small mb-0">Total Amount</p>
+                            <p class="price-value" style="font-size: 1.8rem; color: var(--accent);">
+                                $${o.totalAmount}
+                            </p>
                         </div>
                     </div>
-                    <div class="order-date-ui text-end">
-                        <p class="text-secondary small mb-0">Record Finalized</p>
-                        <!-- Changed to match getTotalAmount() -->
-                        <p class="price-value" style="font-size: 1.8rem; color: var(--accent);">
-                            $${o.totalAmount}
+
+                    <div class="order-items-list py-3">
+                        <label class="product-tag mb-3" style="border: none; padding-left: 0;">Vehicle Manifest</label>
+                        
+                        <%-- 
+                           CRITICAL CHANGE: Look up items in the map using the current order ID 
+                           Syntax: ${mapName[key]}
+                        --%>
+                        <c:forEach items="${orderMap[o.id]}" var="item">
+                            <div class="order-item-row d-flex justify-content-between align-items-center mb-3">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div>
+                                        <h4 class="h6 mb-0 text-primary" style="letter-spacing: 1px;">
+                                            ${item.product.name}
+                                        </h4>
+                                        <p class="text-secondary m-0" style="font-size: 0.75rem; text-transform: uppercase;">
+                                            ${item.product.brand} &middot; Qty: ${item.quantity}
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="text-end">
+                                    <span class="text-primary small" style="font-family: 'Cormorant Garamond', serif; font-size: 1.1rem;">
+                                        $${item.priceAtPurchase}
+                                    </span>
+                                </div>
+                            </div>
+                        </c:forEach>
+                    </div>
+
+                    <div class="order-body pt-4 border-top">
+                        <div class="row align-items-center">
+                            <div class="col-md-7">
+                                <label class="text-accent small text-uppercase" style="letter-spacing: 2px; font-size: 0.6rem; display: block; margin-bottom: 5px;">Delivery Destination</label>
+                                <p class="text-primary mb-1">${o.address.street}</p>
+                                <p class="text-secondary small m-0">
+                                    ${o.address.city}, ${o.address.state} ${o.address.pincode}
+                                </p>
+                            </div>
+                            <div class="col-md-5 text-md-end mt-3 mt-md-0">
+                                 <a href="/profile/invoice/${o.id}" class="btn-action w-100 d-inline-block text-center">
+                                    <i class="bi bi-file-earmark-pdf"></i> Download Manifest
+                                 </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="order-footer mt-4">
+                        <p class="m-0 italic small text-muted">
+                            Secured acquisition for User: ${user.name} (${o.user.email}). 
+                            Transaction linked to Address Ref: ${o.address.id}.
                         </p>
                     </div>
                 </div>
-
-                <div class="order-body py-4">
-                    <div class="row">
-                        <div class="col-md-8">
-                            <label class="product-tag" style="border: none; padding-left: 0;">Logistics Context</label>
-                            <!-- Accessing address properties via the Address entity in Order -->
-                            <p class="text-primary mb-1">${o.address.street}</p>
-                            <p class="text-secondary small">
-                                ${o.address.city}, ${o.address.state} ${o.address.pincode}
-                            </p>
-                        </div>
-                        <div class="col-md-4 text-md-end d-flex align-items-center justify-content-md-end">
-                             <a href="/profile/invoice/${o.id}" class="btn-action">
-                                <i class="bi bi-file-earmark-pdf"></i> View Invoice
-                             </a>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="order-footer">
-                    <p class="m-0 italic small text-muted">Transaction secure. Ownership records updated for User ID: ${o.user.id}</p>
-                </div>
-            </div>
+            </c:forEach>
         </c:when>
 
         <c:otherwise>

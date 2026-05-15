@@ -29,7 +29,7 @@ public class Orders {
     // "PENDING", "PAID", "FAILED"
     private String paymentStatus;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "address_id")
     private Address address;
 
