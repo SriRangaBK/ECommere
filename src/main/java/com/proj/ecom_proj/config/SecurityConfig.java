@@ -35,10 +35,13 @@ public class SecurityConfig {
                     "/css/**",
                     "/js/**",
                     "/images/**"
+                    
                 ).permitAll()
 
                 .requestMatchers(
-                    "/add_product"
+                    "/add_product",
+                    "/cart",
+                    "/checkout"
                 ).authenticated()
 
                 .anyRequest().permitAll()

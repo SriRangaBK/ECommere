@@ -2,7 +2,7 @@ package com.proj.ecom_proj.service;
 
 import java.util.List;
 
-
+import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -11,8 +11,10 @@ import org.springframework.stereotype.Service;
 
 import com.proj.ecom_proj.model.Category;
 import com.proj.ecom_proj.model.Product;
+import com.proj.ecom_proj.model.ProductImages;
 import com.proj.ecom_proj.model.Users;
 import com.proj.ecom_proj.repo.CategoryRepo;
+import com.proj.ecom_proj.repo.ProductImagesRepo;
 import com.proj.ecom_proj.repo.ProductRepo;
 import com.proj.ecom_proj.repo.UserRepo;
 
@@ -23,6 +25,8 @@ public class ProductService {
 	private ProductRepo repo;
 	@Autowired
 	private CategoryRepo cRepo;
+	@Autowired
+	private ProductImagesRepo pRepo;
 
     
 	public List<Product> getAllProducts(){
@@ -61,5 +65,9 @@ public class ProductService {
 		Category cat = cRepo.findById(id).orElse(new Category());
 		return cat.getProducts();
 			
+	}
+
+	public List<ProductImages> getProductImages(int id) {
+		return pRepo.findByProduct_Id(id);
 	}
 }

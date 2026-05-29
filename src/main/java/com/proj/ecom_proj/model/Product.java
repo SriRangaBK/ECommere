@@ -1,15 +1,22 @@
 package com.proj.ecom_proj.model;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+
 import org.springframework.format.annotation.DateTimeFormat;
 import com.fasterxml.jackson.annotation.JsonFormat;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 //import lombok.AllArgsConstructor;
 //import lombok.NoArgsConstructor;
+import jakarta.persistence.OneToMany;
 
 
 
@@ -102,4 +109,16 @@ public class Product {
 	public void setCategory(Category category) {
 		this.category = category;
 	}
+	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	private List<ProductImages> images = new ArrayList<>();
+
+	// ADD THESE GETTER/SETTERS TO YOUR PRODUCT CLASS
+	public List<ProductImages> getImages() {
+	    return images;
+	}
+
+	public void setImages(List<ProductImages> images) {
+	    this.images = images;
+	}
+	
 }

@@ -14,12 +14,11 @@ import com.proj.ecom_proj.model.Orders;
 import com.proj.ecom_proj.service.OrderService;
 
 @Controller
-
 public class OrderController {
 	@Autowired
     private OrderService orderService;
 
-    @PostMapping("/orders//place")
+    @PostMapping("/orders/place")
     public String placeOrder(
             @AuthenticationPrincipal org.springframework.security.core.userdetails.User userDetails) {
 

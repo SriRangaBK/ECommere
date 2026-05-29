@@ -42,17 +42,19 @@ public class HomeController {
     @GetMapping("/")
     public String home(Model model,
             @AuthenticationPrincipal org.springframework.security.core.userdetails.User userDetails) {
-
+    	int cartSize = 0;
         if (userDetails != null) {
             String email = userDetails.getUsername();
 
             Users user = uRepo.findByEmail(email).orElse(null);
             model.addAttribute("user", user);
-        }
+        
         List<CartItems> items =
                 cService.getCartItems(
                         userDetails.getUsername());
-        model.addAttribute("cartSize",items.size());
+        cartSize = items.size();
+        }
+        model.addAttribute("cartSize",cartSize);
         model.addAttribute("products", service.getAllProducts());
         model.addAttribute("categories", service.getAllCategories());
 
@@ -73,13 +75,20 @@ public class HomeController {
     }
     @GetMapping("/product/{id}")
     public String getProduct(@PathVariable int id, Model model, @AuthenticationPrincipal org.springframework.security.core.userdetails.User userDetails) {
-        if (userDetails != null) {
+        int cartSize = 0;
+    	if (userDetails != null) {
             String email = userDetails.getUsername();
 
             Users user = uRepo.findByEmail(email).orElse(null);
             model.addAttribute("user", user);
+            List<CartItems> items =
+                    cService.getCartItems(
+                            userDetails.getUsername());
+            cartSize = items.size();
         }
+    	model.addAttribute("cartSize",cartSize);
         model.addAttribute("product", service.getProduct(id));
+        model.addAttribute("product_images",service.getProductImages(id));
 
         return "product";
     }

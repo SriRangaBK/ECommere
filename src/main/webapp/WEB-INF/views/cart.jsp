@@ -18,8 +18,8 @@
             --border: rgba(255, 255, 255, 0.08);
             --accent: #d4af37; /* More refined gold */
             --accent-glow: rgba(212, 175, 55, 0.2);
-            --text-primary: #f8f6f2;
-            --text-secondary: #a1a1aa;
+            --text-primary: rgb(255, 255, 255);
+            --text-secondary: rgb(255, 255, 255);
             --navbar-blur: rgba(10, 10, 12, 0.8);
         }
 
@@ -30,7 +30,7 @@
             --border: rgba(0, 0, 0, 0.06);
             --accent: #926d27;
             --text-primary: #1c1917;
-            --text-secondary: #57534e;
+            --text-secondary: rgb(0, 0, 0);
             --navbar-blur: rgba(253, 252, 249, 0.9);
         }
 	
@@ -195,6 +195,37 @@ p, label, .product-brand, .cart-text {
             text-decoration: none;
             letter-spacing: 1px;
         }
+        /* Premium Responsive Cart Thumbnail Container Frame */
+.vehicle-thumb-wrapper {
+    width: 90px;
+    height: 90px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+    flex-shrink: 0; /* Prevents the asset display wrapper from flattening on tighter mobile views */
+    transition: border-color 0.25s ease;
+}
+
+.cart-card:hover .vehicle-thumb-wrapper {
+    border-color: var(--accent);
+}
+
+/* Interior Vector/Raster Asset Constraint Rendering Scaling Rules */
+.vehicle-thumb-img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    transition: transform 0.3s ease;
+}
+
+.cart-card:hover .vehicle-thumb-img {
+    transform: scale(1.04);
+}
     </style>
 </head>
 <body>
@@ -320,7 +351,17 @@ p, label, .product-brand, .cart-text {
                 <c:otherwise>
                     <c:forEach items="${items}" var="item">
                         <div class="cart-card d-flex align-items-center gap-4">
-                            <img src="/api/products/${item.product.id}/image" alt="${item.product.name}" class="vehicle-thumb d-none d-md-block">
+                            <div class="vehicle-thumb-wrapper">
+    <c:set var="currentProdId" value="${item.product.id}" />
+    <c:choose>
+        <c:when test="${not empty productImagesMap[currentProdId]}">
+            <img src="${productImagesMap[currentProdId]}" alt="${item.product.name}" class="vehicle-thumb-img">
+        </c:when>
+        <c:otherwise>
+            <img src="https://images.unsplash.com/photo-1531403009284-440f080d1e12?q=80&w=150" alt="Showroom Asset Pending" class="vehicle-thumb-img">
+        </c:otherwise>
+    </c:choose>
+</div>
                             
                             <div class="flex-grow-1">
                                 <span class="text-accent small text-uppercase" style="letter-spacing: 2px;">${item.product.brand}</span>
