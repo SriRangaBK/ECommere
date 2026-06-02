@@ -2,506 +2,395 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>${selectedCategory} | CarSell</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${selectedCategory} | ClickNBuy Luxury</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <!-- REUSE THE CSS FROM YOUR HOME PAGE HERE -->
+
     <style>
-
         :root {
-            --bg: #0c0c0e;
-            --surface: #131316;
+            --bg: #09090b;
+            --surface: #141417;
             --card: #18181c;
-            --border: rgba(255,255,255,0.07);
-
-            --accent: #c9a96e;
-            --accent-dim: rgba(201,169,110,0.12);
-
-            --text-primary: #f0ede8;
-            --text-secondary: #8a8882;
-            --text-muted: #555450;
-
-            --navbar-bg: rgba(12,12,14,0.88);
-
-            --shadow-card: rgba(0,0,0,0.45);
-
-            --btn-text: #0c0c0e;
+            --border: rgba(255, 255, 255, 0.06);
+            --accent: #e5c158; 
+            --accent-glow: rgba(229, 193, 88, 0.15);
+            --text-primary: #f4f4f5;
+            --text-secondary: #a1a1aa;
+            --navbar-blur: rgba(9, 9, 11, 0.8);
         }
 
         body.light {
-            --bg: #f7f4ef;
-            --surface: #edeae4;
+            --bg: #faf9f6;
+            --surface: #f4f3ee;
             --card: #ffffff;
-            --border: rgba(0,0,0,0.08);
-
-            --accent: #a8782e;
-            --accent-dim: rgba(168,120,46,0.10);
-
-            --text-primary: #1a1814;
-            --text-secondary: #6b6660;
-            --text-muted: #a09c98;
-
-            --navbar-bg: rgba(247,244,239,0.90);
-
-            --shadow-card: rgba(0,0,0,0.10);
-
-            --btn-text: #ffffff;
+            --border: rgba(0, 0, 0, 0.05);
+            --accent: #8b6e2a;
+            --accent-glow: rgba(139, 110, 42, 0.1);
+            --text-primary: #18181b;
+            --text-secondary: #71717a;
+            --navbar-blur: rgba(250, 249, 246, 0.9);
         }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+	
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             background: var(--bg);
             color: var(--text-primary);
             font-family: 'DM Sans', sans-serif;
-            min-height: 100vh;
-            padding-top: 70px;
-            transition: 0.4s ease;
+            transition: background 0.6s cubic-bezier(0.16, 1, 0.3, 1), color 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            overflow-x: hidden;
+            letter-spacing: -0.01em;
         }
 
-        body::before {
-            content: '';
-            position: fixed;
-            inset: 0;
+        /* --- Luxury Scrollbar --- */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
-            background-image:
-                    url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-
-            pointer-events: none;
-            z-index: 0;
-            opacity: 0.4;
+        h1, h2, h3, h4, h5, h6, .product-name, .section-title {
+            color: var(--text-primary);
+            font-weight: 400;
         }
 
-        /* Navbar */
-
+        /* --- Navbar Upgrade --- */
         .navbar {
-            background: var(--navbar-bg) !important;
-
+            background: var(--navbar-blur) !important;
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-
             border-bottom: 1px solid var(--border);
-
-            height: 70px;
-            padding: 0 30px;
+            padding: 1rem 3% 1rem 3%;
+            z-index: 2000;
         }
 
         .navbar-brand {
             font-family: 'Cormorant Garamond', serif;
-            font-size: 1.7rem;
             font-weight: 600;
-            color: var(--accent) !important;
+            font-size: 1.45rem;
+            color: var(--text-primary) !important;
             letter-spacing: 0.12em;
             text-transform: uppercase;
+        }
+        .navbar-brand span {
+            color: var(--accent);
         }
 
         .nav-link {
             color: var(--text-secondary) !important;
-            font-size: 0.78rem;
+            font-size: 0.85rem;
             text-transform: uppercase;
             letter-spacing: 0.1em;
-            padding: 6px 14px !important;
+            padding: 0.5rem 1rem !important;
+            transition: color 0.3s ease;
         }
 
-        .nav-link:hover,
-        .nav-link.active {
-            color: var(--text-primary) !important;
+        .nav-link:hover, .nav-link.active {
+            color: var(--accent) !important;
         }
 
-        .navbar-right {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-left: auto;
-        }
-
-        /* Theme Button */
-
-        .theme-btn {
-            width: 38px;
-            height: 38px;
-
-            border-radius: 8px;
-            border: 1px solid var(--border);
-
-            background: var(--surface);
-            color: var(--text-secondary);
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            cursor: pointer;
-
-            transition: 0.25s ease;
-        }
-
-        .theme-btn:hover {
-            color: var(--accent);
-            border-color: var(--accent);
-            transform: rotate(15deg);
-        }
-
-        /* Search */
-
-        .search-input {
-            width: 220px;
-            height: 38px;
-
+        .dropdown-menu {
             background: var(--surface) !important;
             border: 1px solid var(--border) !important;
-
-            color: var(--text-primary) !important;
-
-            border-radius: 8px;
-            font-size: 0.8rem;
+            border-radius: 4px;
+            padding: 0.5rem 0;
+            margin-top: 10px !important;
         }
 
-        .search-input::placeholder {
-            color: var(--text-secondary);
-        }
-
-        /* Cart */
-
-        .cart-icon {
-            position: relative;
-
-            display: flex;
-            align-items: center;
-            gap: 8px;
-
-            padding: 8px 14px;
-
-            border-radius: 8px;
-            border: 1px solid var(--border);
-
-            background: var(--surface);
-
-            cursor: pointer;
-
-            color: var(--text-secondary);
-
-            transition: 0.25s ease;
-        }
-
-        .cart-icon:hover {
-            border-color: var(--accent);
-            color: var(--accent);
-        }
-
-        .cart-text {
-            font-size: 0.78rem;
+        .dropdown-item {
+            color: var(--text-secondary) !important;
+            font-size: 0.75rem;
             text-transform: uppercase;
-            letter-spacing: 0.08em;
+            letter-spacing: 0.05em;
+            padding: 0.6rem 1.5rem;
         }
 
-        .cart-badge {
-            position: absolute;
-            top: -6px;
-            right: -6px;
-
-            width: 18px;
-            height: 18px;
-
-            border-radius: 50%;
-
-            background: var(--accent);
-            color: var(--btn-text);
-
-            font-size: 0.65rem;
-            font-weight: bold;
-
-            display: none;
-            align-items: center;
-            justify-content: center;
+        .dropdown-item:hover {
+            background: var(--accent-glow) !important;
+            color: var(--accent) !important;
         }
 
-        /* Section */
+        /* --- Page Container --- */
+        .page-container { 
+            padding: 150px 6% 100px 6%; 
+            max-width: 1600px;
+            margin: 0 auto;
+        }
 
-        .section-header {
-            padding: 40px 48px 10px;
+        /* --- Asymmetric Category Intro Hero --- */
+        .category-hero {
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 3.5rem;
+            margin-bottom: 4.5rem;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 40px;
+            align-items: end;
+        }
 
-            display: flex;
-            align-items: center;
-            gap: 16px;
+        .hero-left-col .hero-subtitle {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3em;
+            color: var(--accent);
+            margin-bottom: 1rem;
+            display: block;
+            font-weight: 500;
         }
 
         .section-title {
             font-family: 'Cormorant Garamond', serif;
-            font-size: 2.3rem;
+            font-size: clamp(2.8rem, 5.5vw, 4.5rem);
             font-weight: 300;
+            line-height: 1.05;
+            letter-spacing: -0.02em;
         }
 
-        .section-line {
-            flex: 1;
-            height: 1px;
-            background: linear-gradient(to right, var(--border), transparent);
+        .hero-right-col {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 20px;
         }
 
         .section-count {
+            font-size: 0.85rem;
+            letter-spacing: 0.05em;
             color: var(--text-secondary);
-            font-size: 0.9rem;
+            font-family: 'DM Sans', sans-serif;
+            text-transform: uppercase;
+            border-left: 2px solid var(--accent);
+            padding-left: 12px;
         }
 
-        /* Grid */
-
-        .grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 24px;
-
-            padding: 30px 48px 60px;
+        /* --- Structural Showcase Layout Grid --- */
+        .showroom-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 45px;
         }
 
-        /* Cards */
-
-        .product-link {
-            text-decoration: none;
-            color: inherit;
-        }
-
+        /* --- Elevated Product Frame Layout --- */
         .card-custom {
-            width: 285px;
-
             background: var(--card);
-
             border: 1px solid var(--border);
-            border-radius: 14px;
-
-            padding: 22px;
-
-            transition: 0.3s ease;
-
-            animation: fadeUp 0.5s ease both;
+            padding: 35px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
         }
 
         .card-custom:hover {
-            transform: translateY(-5px);
+            border-color: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.25);
+            transform: translateY(-4px);
+        }
+        body.light .card-custom:hover {
+            border-color: rgba(0, 0, 0, 0.12);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.06);
+        }
 
-            border-color: rgba(201,169,110,0.30);
-
-            box-shadow: 0 12px 30px var(--shadow-card);
+        .card-top-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3.5rem;
         }
 
         .product-tag {
-            font-size: 0.68rem;
+            font-size: 0.65rem;
             text-transform: uppercase;
+            color: var(--text-secondary);
             letter-spacing: 0.1em;
-
-            color: var(--accent);
+            font-weight: 500;
         }
 
-        .product-name {
-            margin-top: 10px;
-
+        .product-index {
             font-family: 'Cormorant Garamond', serif;
-            font-size: 1.35rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        .product-details-wrap {
+            margin-bottom: 4rem;
         }
 
         .product-brand {
-            margin-top: 5px;
-
-            color: var(--text-secondary);
-            font-size: 0.82rem;
+            color: var(--accent);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            font-weight: 600;
+            margin-bottom: 0.6rem;
+            display: block;
         }
 
-        .card-divider {
-            border-color: var(--border);
-            margin: 18px 0;
+        .product-name {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.2rem;
+            line-height: 1.15;
+            font-weight: 300;
+            letter-spacing: -0.01em;
         }
 
-        .card-bottom {
+        .price-container {
+            margin-top: auto;
+            padding-top: 2rem;
             display: flex;
-            align-items: center;
             justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid var(--border);
         }
 
-        .price {
-            display: flex;
-            align-items: center;
-            gap: 2px;
+        .price-label {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-secondary);
+            display: block;
+            margin-bottom: 2px;
         }
 
         .price-value {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.6rem;
-            font-weight: 600;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 1.35rem;
+            font-weight: 500;
+            color: var(--text-primary);
         }
 
-        .btn-custom {
-            background: var(--accent);
-            color: var(--btn-text);
-
-            border: none;
-            border-radius: 8px;
-
-            padding: 9px 16px;
-
-            font-size: 0.70rem;
-            font-weight: 600;
-
+        /* --- Action UI Components --- */
+        .btn-action {
+            background: var(--text-primary);
+            border: 1px solid var(--text-primary);
+            color: var(--bg);
+            padding: 12px 26px;
+            font-size: 0.7rem;
             text-transform: uppercase;
-            letter-spacing: 0.08em;
-
-            transition: 0.25s ease;
+            letter-spacing: 0.15em;
+            font-weight: 600;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        .btn-custom:hover {
-            transform: translateY(-2px);
+        .btn-action:hover {
+            background: transparent;
+            color: var(--text-primary);
+            border-color: var(--text-primary);
         }
 
-        /* Modal */
-
-        #cartModal {
-            display: none;
-
-            position: fixed;
-            inset: 0;
-
-            background: rgba(0,0,0,0.8);
-
-            z-index: 2000;
-
-            backdrop-filter: blur(10px);
-
-            overflow-y: auto;
-
-            padding: 20px;
+        /* --- Luxury Navbar Search --- */
+        .search-input {
+            background: transparent !important;
+            color: var(--text-primary) !important;
+            border: none !important;
+            border-bottom: 1px solid var(--border) !important;
+            border-radius: 0 !important;
+            font-size: 0.8rem;
+            padding-left: 0 !important;
+            width: 180px;
+            transition: all 0.4s ease;
+        }
+        .search-input:focus {
+            box-shadow: none !important;
+            border-bottom-color: var(--text-primary) !important;
+            width: 220px;
+        }
+        .search-input::placeholder {
+            color: var(--text-secondary);
+            opacity: 0.6;
         }
 
-        .cart-modal-content {
-            max-width: 520px;
-
-            margin: 90px auto;
-
-            background: var(--surface);
-
-            border: 1px solid var(--border);
-            border-radius: 14px;
-
-            padding: 35px;
+        @media (max-width: 991px) {
+            .category-hero { grid-template-columns: 1fr; gap: 20px; padding-bottom: 2.5rem; margin-bottom: 3rem;}
+            .hero-right-col { align-items: flex-start; }
+            .search-input { width: 100%; }
+            .search-input:focus { width: 100%; }
         }
-	.cart-product-name {
-    color: var(--text-primary) !important;
-    font-weight: 700;
-    font-size: 1rem;
-}
-        .modal-title {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 2rem;
-
-            color: var(--accent);
-
-            margin-bottom: 24px;
+        @media (max-width: 768px) {
+            .page-container { padding: 120px 1.5rem 60px 1.5rem; }
+            .showroom-grid { gap: 30px; }
         }
-        /* Dropdown Styling */
-.dropdown-item:hover {
-    background-color: var(--accent-dim) !important;
-    color: var(--accent) !important;
-}
-
-.dropdown-menu {
-    margin-top: 10px !important;
-    border-radius: 10px !important;
-}
-
-/* Ensure the arrow changes color based on theme */
-.nav-link.dropdown-toggle::after {
-    color: var(--text-secondary);
-}
-
-        @keyframes fadeUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @media(max-width: 768px) {
-
-            .grid {
-                justify-content: center;
-                padding: 25px;
-            }
-
-            .section-header {
-                padding: 30px 25px 0;
-            }
-
-            .search-input {
-                width: 160px;
-            }
-
-            .navbar {
-                padding: 0 15px;
-            }
-        }
-
     </style>
 </head>
+
 <body>
+
 <header>
     <nav class="navbar navbar-expand-lg fixed-top">
         <div class="container-fluid">
-            <a class="navbar-brand" href="/">CarSell</a>
+            <a class="navbar-brand" href="/">Click<span>N</span>Buy</a>
             
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navContent" style="color: var(--text-primary);">
+                <i class="bi bi-list" style="font-size: 1.5rem;"></i>
+            </button>
+
             <div class="collapse navbar-collapse" id="navContent">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item"><a class="nav-link active" href="/">Home</a></li>
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
+                    <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+                    
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">Categories</a>
-                        <ul class="dropdown-menu border-0 shadow" style="background: var(--surface); border: 1px solid var(--border) !important;">
+                        <a class="nav-link dropdown-toggle active" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                            Categories
+                        </a>
+                        <ul class="dropdown-menu shadow-lg">
                             <c:forEach items="${categories}" var="category">
-                                <li><a class="dropdown-item" href="/category/${category.id}" style="color: var(--text-secondary); font-size: 0.8rem; text-transform: uppercase;">${category.name}</a></li>
+                                <li>
+                                    <a class="dropdown-item" href="/category/${category.id}">
+                                        ${category.name}
+                                    </a>
+                                </li>
                             </c:forEach>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="/" style="color: var(--accent); font-size: 0.8rem;">VIEW ALL</a></li>
+                            <li><hr class="dropdown-divider opacity-10" style="border-color: var(--border);"></li>
+                            <li><a class="dropdown-item" href="/" style="color: var(--accent) !important;">VIEW ALL</a></li>
                         </ul>
                     </li>
+
                     <c:if test="${not empty user && user.role == 'admin'}">
                         <li class="nav-item"><a class="nav-link" href="/add_product">Add Product</a></li>
                     </c:if>
                 </ul>
             </div>
 
-            <div class="navbar-right">
-                <input type="text" id="productSearch" class="form-control search-input d-none d-md-block" placeholder="Search models...">
+            <div class="navbar-right d-flex align-items-center gap-3">
+                <input type="text" id="productSearch" class="form-control search-input d-none d-md-block" placeholder="Search this tier...">
 
-                <button id="themeToggle" class="theme-btn">
-                    <i class="bi bi-sun-fill"></i>
+                <button id="themeToggle" class="btn btn-link text-decoration-none p-0" style="color: var(--text-primary); font-size: 1.1rem;">
+                    <i class="bi bi-brightness-high"></i>
                 </button>
 
-<div class="cart-icon px-3 py-2" onclick="window.location.href='/cart'" id="cartContainer"
-    style="cursor:pointer; color: var(--text-primary); border: 1px solid var(--border); display: flex; align-items: center; gap: 8px; border-radius: 8px;">
-    <i class="bi bi-bag"></i>
-    <span id="cartCount" class="badge rounded-pill bg-danger text-white" 
-          style="font-size: 0.7rem; padding: 4px 7px; display:none;">0</span>
-</div>
+                <!-- Cart Component Wrapper -->
+                <div class="cart-icon px-2 py-1" onclick="cart()" id="cartContainer" style="cursor:pointer; color: var(--text-primary); display: flex; align-items: center; gap: 6px; position: relative;">
+                    <i class="bi bi-bag" style="font-size: 1.1rem;"></i>
+                    <span id="cartCount" class="badge rounded-pill bg-danger text-white" style="font-size: 0.6rem; padding: 3px 6px; position: absolute; top: -4px; right: -8px; display: none;">
+                        0
+                    </span>
+                </div>
+
                 <c:choose>
                     <c:when test="${not empty user}">
-                        <div class="d-flex align-items-center gap-3 ms-2">
-                            <span style="color: var(--text-secondary); font-size: 0.8rem; text-transform: uppercase;">
-                                <i class="bi bi-person-circle"></i> ${user.name}
-                            </span>
-                            <form action="/logout" method="post" style="margin:0;">
-                                <button class="btn-custom" style="padding: 8px 14px; font-size: 0.68rem;">Logout</button>
-                            </form>
+                        <div class="dropdown">
+                            <button class="btn p-0 border-0 text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" style="color: var(--text-primary); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em;">
+                                <i class="bi bi-person ms-1" style="font-size: 1.1rem; vertical-align: middle;"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end shadow-lg">
+                                <li><a class="dropdown-item" href="/profile">My Profile</a></li>
+                                <li><hr class="dropdown-divider opacity-10" style="border-color: var(--border);"></li>
+                                <li>
+                                    <form action="/logout" method="post" class="m-0">
+                                        <button class="dropdown-item text-danger">Logout</button>
+                                    </form>
+                                </li>
+                            </ul>
                         </div>
                     </c:when>
                     <c:otherwise>
-                        <a href="/login" class="nav-link">Login</a>
+                        <a href="/login" class="nav-link p-0" style="font-size: 0.8rem;">Login</a>
                     </c:otherwise>
                 </c:choose>
             </div>
@@ -509,118 +398,149 @@
     </nav>
 </header>
 
-<div class="section-header">
-    <h1 class="section-title">${selectedCategory}</h1>
-    <div class="section-line"></div>
-    <span class="section-count" id="countDisplay">${products.size()} items found</span>
-</div>
+<main class="page-container">
+    <!-- Asymmetrical Category Header -->
+    <div class="category-hero">
+        <div class="hero-left-col">
+            <span class="hero-subtitle">Tier Segment Showcase</span>
+            <h1 class="section-title">${selectedCategory}</h1>
+        </div>
+        <div class="hero-right-col">
+            <span class="section-count" id="countDisplay">${products.size()} Models Found</span>
+        </div>
+    </div>
 
-<div class="grid" id="productGrid">
-    <c:forEach items="${products}" var="product">
-        <div class="product-link" data-name="${product.name.toLowerCase()}" data-brand="${product.brand.toLowerCase()}">
-            <div class="card-custom">
-                <a href="/product/${product.id}" style="text-decoration:none;color:inherit;">
-                    <span class="product-tag">${product.brand}</span>
-                    <div class="product-name">${product.name.toUpperCase()}</div>
-                </a>
-                <hr class="card-divider">
-                <div class="card-bottom">
-                    <div class="price">
-                        <span><i class="bi bi-currency-rupee"></i></span>
-                        <span class="price-value">${product.price}</span>
+    <!-- Dynamic Architectural Grid Layout -->
+    <div class="showroom-grid" id="productGrid">
+        <c:forEach items="${products}" var="product" varStatus="status">
+            <div class="product-item" data-name="${product.name.toLowerCase()}" data-brand="${product.brand.toLowerCase()}">
+                <div class="card-custom">
+                    <div class="card-top-meta">
+                        <span class="product-tag">Collection // ${selectedCategory}</span>
+                        <span class="product-index">0${status.index + 1}</span>
                     </div>
-                    <button type="button" class="btn-custom" onclick="addToCart('${product.id}', '${product.name}', '${product.price}', this)">
-                        Add To Cart
-                    </button>
+                    
+                    <div class="product-details-wrap">
+                        <a href="/product/${product.id}" class="text-decoration-none text-reset">
+                            <span class="product-brand">${product.brand}</span>
+                            <h2 class="product-name">${product.name.toUpperCase()}</h2>
+                        </a>
+                    </div>
+                    
+                    <div class="price-container">
+                        <div>
+                            <span class="price-label">Value</span>
+                            <div class="price-value">₹ ${product.price}</div>
+                        </div>
+                        <button class="btn-action" onclick="addToCart('${product.id}')">
+                            Inquire
+                        </button>
+                    </div>
                 </div>
             </div>
-        </div>
-    </c:forEach>
-</div>
+        </c:forEach>
+    </div>
+</main>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-
-<!-- Cart Modal & Scripts (Theme, Cart logic) must be pasted here too -->
 <script>
+    /**
+     * Theme Controller Context
+     */
+    const themeController = {
+        init() {
+            const saved = localStorage.getItem('carsell_theme');
+            if (saved === 'light') document.body.classList.add('light');
+            
+            document.getElementById('themeToggle').addEventListener('click', () => {
+                const isLight = document.body.classList.toggle('light');
+                localStorage.setItem('carsell_theme', isLight ? 'light' : 'dark');
+            });
+        }
+    };
 
-    // Theme
+    /**
+     * Client Filtering System
+     */
+    const searchController = {
+        init() {
+            const input = document.getElementById('productSearch');
+            const items = document.querySelectorAll('.product-item');
+            const counter = document.getElementById('countDisplay');
 
-    const body = document.body;
+            if (!input) return;
 
-    const themeToggle = document.getElementById('themeToggle');
+            input.addEventListener('input', (e) => {
+                const query = e.target.value.toLowerCase();
+                let visible = 0;
 
-    const icon = themeToggle.querySelector('i');
+                items.forEach(item => {
+                    const match = item.dataset.name.includes(query) || item.dataset.brand.includes(query);
+                    item.style.display = match ? 'block' : 'none';
+                    if (match) visible++;
+                });
 
-    if (localStorage.getItem('theme') === 'light') {
+                counter.innerText = `${visible} Models Found`;
+            });
+        }
+    };
 
-        body.classList.add('light');
+    /**
+     * Pipeline Cart Interface
+     */
+    const cartUIController = {
+        syncCount() {
+            fetch("/api/cart")
+                .then(response => {
+                    if (!response.ok) throw new Error("Unauthenticated request configuration context");
+                    return response.text();
+                })
+                .then(serverCount => {
+                    const countBadge = document.getElementById("cartCount");
+                    if (countBadge) {
+                        const countInt = parseInt(serverCount) || 0;
+                        countBadge.innerText = countInt;
+                        
+                        if (countInt > 0) {
+                            countBadge.style.display = "inline-block";
+                        } else {
+                            countBadge.style.display = "none";
+                        }
+                    }
+                })
+                .catch(err => {
+                    console.log("Cart tracking node sitting at idle condition status:", err.message);
+                });
+        }
+    };
 
-        icon.classList.replace(
-            'bi-sun-fill',
-            'bi-moon-stars-fill'
-        );
+    function cart() {
+        window.location.href = "/cart";
     }
 
-    themeToggle.addEventListener('click', () => {
-
-        body.classList.toggle('light');
-
-        const isLight = body.classList.contains('light');
-
-        if (isLight) {
-
-            icon.classList.replace(
-                'bi-sun-fill',
-                'bi-moon-stars-fill'
-            );
-
-            localStorage.setItem('theme', 'light');
-
-        } else {
-
-            icon.classList.replace(
-                'bi-moon-stars-fill',
-                'bi-sun-fill'
-            );
-
-            localStorage.setItem('theme', 'dark');
-        }
-    });
     function addToCart(productId) {
         fetch("/cart/add/" + productId, {
             method: "POST"
         })
         .then(response => {
-            if(response.ok) {
-                updateCartIndicator();
-            }
+            if (!response.ok) throw new Error("Could not execute target modification context.");
+            return response.text();
         })
-        .catch(error => console.error('Error:', error));
+        .then(data => {
+            cartUIController.syncCount();
+        })
+        .catch(error => {
+            console.error("Cart system execution context dropped:", error);
+            alert("Please sign in to parse items to your luxury selection layout context.");
+            window.location.href = "/login";
+        });
     }
-    const searchController = {
-            init() {
-                const input = document.getElementById('productSearch');
-                const items = document.querySelectorAll('.product-item');
-                const counter = document.getElementById('countDisplay');
 
-                input.addEventListener('input', (e) => {
-                    const query = e.target.value.toLowerCase();
-                    let visible = 0;
-
-                    items.forEach(item => {
-                        const match = item.dataset.name.includes(query) || item.dataset.brand.includes(query);
-                        item.style.display = match ? 'block' : 'none';
-                        if (match) visible++;
-                    });
-
-                    counter.innerText = `\${visible} models found`;
-                });
-            }
-        };
+    // Fire controllers execution sequence paths
+    themeController.init();
     searchController.init();
-    
+    cartUIController.syncCount();
 </script>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

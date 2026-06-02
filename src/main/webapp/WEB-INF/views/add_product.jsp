@@ -3,9 +3,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>List Your Vehicle | CARSELL</title>
+    <title>ClickNBuy</title>
     
-    <!-- Fonts & Bootstrap (Matching Home Page) -->
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
@@ -74,6 +73,19 @@
             border-color: var(--accent) !important;
             box-shadow: 0 0 0 4px rgba(201, 169, 110, 0.1);
         }
+
+        /* --- Placeholder Visibility Fix --- */
+        .form-control::placeholder {
+            color: var(--text-secondary) !important;
+            opacity: 0.6; /* Softened so it feels subordinate to typed text */
+        }
+
+        /* For WebKit browsers (Safari/Chrome) and Firefox fallback safety */
+        :-ms-input-placeholder { color: var(--text-secondary) !important; opacity: 0.6; }
+        ::-ms-input-placeholder { color: var(--text-secondary) !important; opacity: 0.6; }
+
+        /* Color fix for HTML5 date/select inputs arrow icons in dark mode */
+        color-scheme: dark;
 
         .btn-gold {
             background: var(--accent);

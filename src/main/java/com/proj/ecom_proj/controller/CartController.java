@@ -19,6 +19,7 @@ import com.proj.ecom_proj.model.Cart;
 import com.proj.ecom_proj.model.CartItems;
 import com.proj.ecom_proj.model.ProductImages;
 import com.proj.ecom_proj.model.Users;
+import com.proj.ecom_proj.repo.UserRepo;
 import com.proj.ecom_proj.service.CartService;
 import com.proj.ecom_proj.service.ProductService;
 
@@ -28,12 +29,30 @@ public class CartController {
 	private CartService service;
 	@Autowired
 	private ProductService pService;
+    @Autowired
+    private UserRepo uRepo;
+	@GetMapping("/api/cart")
+	@ResponseBody
+	public int getCartCount(@AuthenticationPrincipal org.springframework.security.core.userdetails.User userDetails){
+		if(userDetails != null) {
+        List<CartItems> items =
+                service.getCartItems(
+                        userDetails.getUsername());
+        return items != null ? items.size() : 0;
+	}
+		return 0;
+	}
+	
 	@GetMapping("/cart")
 	public String getCartItems(@AuthenticationPrincipal org.springframework.security.core.userdetails.User userDetails, Model model) {
 	    if (userDetails == null) {
 	        return "redirect:/login";
 	    }
+        String email = userDetails.getUsername();
 
+        Users user = uRepo.findByEmail(email).orElse(null);
+        model.addAttribute("user", user);
+        
 	    // 1. Fetch cart items
 	    List<CartItems> items = service.getCartItems(userDetails.getUsername());
 	    model.addAttribute("items", items);
